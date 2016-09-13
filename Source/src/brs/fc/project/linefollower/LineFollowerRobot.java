@@ -9,7 +9,7 @@ import lejos.nxt.SensorPort;
 import lejos.util.Delay;
 
 public class LineFollowerRobot {
-	private static float INITIAL_SPEED, MAX_SPEED, MIN_SPEED;
+	private static float INITIAL_SPEED = 50;
 	private LightSensor mLeftLS;
 	private LightSensor mRightLS;
 	private NXTRegulatedMotor mRightMotor;
@@ -22,8 +22,8 @@ public class LineFollowerRobot {
 		mRightLS = new LightSensor(SensorPort.S1);
 		mRightMotor = Motor.A;
 		mLeftMotor = Motor.C;
-		INITIAL_SPEED = 50;
-
+		mRightMotor.setSpeed(INITIAL_SPEED);
+		mLeftMotor.setSpeed(INITIAL_SPEED);
 	}
 
 	public void calibrate() {
@@ -44,18 +44,18 @@ public class LineFollowerRobot {
 
 			if (liError == 0) {
 
-				settingSpeed(mRightMotor, INITIAL_SPEED);
-				settingSpeed(mLeftMotor, INITIAL_SPEED);
+				setSpeed(mRightMotor, INITIAL_SPEED);
+				setSpeed(mLeftMotor, INITIAL_SPEED);
 
 			} else if (liError > 0) {
 
-				settingSpeed(mRightMotor, INITIAL_SPEED * (1 - lfControlValue));
-				settingSpeed(mLeftMotor, INITIAL_SPEED * (1 + lfControlValue));
+				setSpeed(mRightMotor, INITIAL_SPEED * (1 - lfControlValue));
+				setSpeed(mLeftMotor, INITIAL_SPEED * (1 + lfControlValue));
 
 			} else {
 
-				settingSpeed(mRightMotor, INITIAL_SPEED * (1 + lfControlValue));
-				settingSpeed(mLeftMotor, INITIAL_SPEED * (1 - lfControlValue));
+				setSpeed(mRightMotor, INITIAL_SPEED * (1 + lfControlValue));
+				setSpeed(mLeftMotor, INITIAL_SPEED * (1 - lfControlValue));
 
 			}
 			Delay.msDelay(100);
@@ -71,32 +71,23 @@ public class LineFollowerRobot {
 
 	}
 
-	private void settingSpeed(NXTRegulatedMotor pMotor, float pSpeed){
+	private void setSpeed(NXTRegulatedMotor pMotor, float pSpeed) {
 		if (isValidSpeed(pMotor, pSpeed) == true) {
 			pMotor.setSpeed(pSpeed);
+			return;
 		}
-		else {
-			if (pSpeed > MAX_SPEED){
-				pMotor.setSpeed(MAX_SPEED);
-			}
-			else {
-				pMotor.setSpeed(MIN_SPEED);
-			}
-			
+		if (pSpeed > pMotor.getMaxSpeed()) {
+			pMotor.setSpeed(pMotor.getMaxSpeed());
+			return;
 		}
+		pMotor.setSpeed(0);
 	}
 
 	private boolean isValidSpeed(NXTRegulatedMotor pMotor, float pSpeed) {
-		if (pSpeed > MAX_SPEED || pSpeed < MIN_SPEED) {
-			return (false);
-		} else {
-			return (true);
+		if (pSpeed > pMotor.getMaxSpeed() || pSpeed < 0) {
+			return false;
 		}
-
-	}
-
-	public static void main(String[] args) {
-
+		return true;
 	}
 
 }
