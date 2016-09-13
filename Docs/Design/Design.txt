@@ -1,0 +1,64 @@
+package brs.fc.project.controllers
+public class PController
+    - private float mfKp
+    - private float mfContolValue 
+    
+    - public PController(float pKp)
+        - mfKp = pKp
+        
+    - public float getControlValueForErr(float pError, float pOffset)
+        - mfContolValue = mfKp*(pError - pOffset)
+        - return mfControlValue
+
+        
+package brs.fc.project.linefollower
+public class LineFollowerRobot
+    - private static float INITIAL_SPEED
+    
+    - private LightSensor mLeftLS
+    - private LightSensor mRightLS
+    - private Motor mRightMotor 
+    - private Motor mLeftMotor
+    - private float mSensorOffset
+    
+    - public LineFollowerRobot
+        - Initialise mLeftLS, mRightLS, mRightMotor, mLeftMotor   
+        - set motor speed to INITIAL_SPEED 
+    
+    - public void calibrate()
+        - determine sensor offset // LLS - RLS 
+        
+    - public void start()
+        - PController lController = new PController(Kp)
+        - move both motors forward
+        - while(button press)
+            - int liError = getError()
+            - float lfControlValue =  getControlValueForError from lController \\ pass error and offset
+            - if error is zero
+                - set both motors to initial speed
+            - elsif error is more than zero
+                - mLeftMotor.setSpeed(INITIAL_SPEED(1 + lfControlValue))
+                - mRightMotor.setSpeed(INITIAL_SPEED(1 - lfControlValue))
+            - else error is less than zero
+                - mRightMotor.setSpeed(INITIAL_SPEED(1 + lfControlValue))
+                - mLeftMotor.setSpeed(INITIAL_SPEED(1 - lfControlValue))
+            - set delay 100    
+            
+    - private int getError()
+        - int liLeftLSValue = mLeftLS getLightValue
+        - int liRightLSValue = mRightLS getLightValue
+        - return liLeftLSValue - liRightLSValue
+        
+        
+package brs.fc.project.linefollower
+public class LineFollower
+    - public static void main
+        - LineFollowerRobot lRobot = new LineFollowerRobot
+        - call calibrate on lRobot
+        - call start on lRobot
+        
+            
+            
+            
+    
+    
