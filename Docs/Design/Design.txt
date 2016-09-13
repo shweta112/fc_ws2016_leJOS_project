@@ -37,17 +37,30 @@ public class LineFollowerRobot
             - if error is zero
                 - set both motors to initial speed
             - elsif error is more than zero
-                - mLeftMotor.setSpeed(INITIAL_SPEED(1 + lfControlValue))
-                - mRightMotor.setSpeed(INITIAL_SPEED(1 - lfControlValue))
+                - setSpeed(mLeftMotor, INITIAL_SPEED(1 + lfControlValue))
+                - setSpeed(mRightMotor, INITIAL_SPEED(1 - lfControlValue))
             - else error is less than zero
-                - mRightMotor.setSpeed(INITIAL_SPEED(1 + lfControlValue))
-                - mLeftMotor.setSpeed(INITIAL_SPEED(1 - lfControlValue))
+                - setSpeed(mRightMotor, INITIAL_SPEED(1 + lfControlValue))
+                - setSpeed(mLeftMotor, INITIAL_SPEED(1 - lfControlValue))
             - set delay 100    
             
     - private int getError()
         - int liLeftLSValue = mLeftLS getLightValue
         - int liRightLSValue = mRightLS getLightValue
         - return liLeftLSValue - liRightLSValue
+        
+    - private void setSpeed(Motor pMotor, float pSpeed)
+		- if pSpeed is valid
+			- set pSpeed in pMotor
+		- if pSpeed > max speed of motor
+			- set max speed
+		- if pSpeed < min speed of motor
+			- set min speed
+			
+	- private boolean isValidSpeed(Motor pMotor, float pSpeed)
+		- if speed > max speed of motor | speed < min speed of motor
+			- return false
+		- return true
         
         
 package brs.fc.project.linefollower
