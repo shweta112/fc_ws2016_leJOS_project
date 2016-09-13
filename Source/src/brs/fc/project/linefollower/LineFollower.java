@@ -1,6 +1,4 @@
-package brs.fc.project.controllers;
-
-import brs.fc.project.linefollower.LineFollowerRobot;
+package brs.fc.project.linefollower;
 
 public class LineFollower {
 
