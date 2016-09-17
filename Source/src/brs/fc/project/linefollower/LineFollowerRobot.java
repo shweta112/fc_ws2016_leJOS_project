@@ -2,6 +2,7 @@ package brs.fc.project.linefollower;
 
 import brs.fc.project.controllers.PController;
 import lejos.nxt.Button;
+import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
@@ -9,7 +10,7 @@ import lejos.nxt.SensorPort;
 import lejos.util.Delay;
 
 public class LineFollowerRobot {
-	private static float INITIAL_SPEED = 50;
+	private static float INITIAL_SPEED = 100;
 	private LightSensor mLeftLS;
 	private LightSensor mRightLS;
 	private NXTRegulatedMotor mRightMotor;
@@ -29,36 +30,29 @@ public class LineFollowerRobot {
 	public void calibrate() {
 
 		mSensorOffset = mLeftLS.getLightValue() - mRightLS.getLightValue();
-
+		LCD.drawString("Calibrated. Ready to start.", 0, 0);
+		LCD.drawString("Offset: " + mSensorOffset, 0, 1);
 	}
 
 	public void start() {
 
-		PController lController = new PController(3);
+		PController lController = new PController((float)3);
 		mRightMotor.forward();
 		mLeftMotor.forward();
 
 		while (!Button.ENTER.isDown()) {
 			int liError = getError();
 			float lfControlValue = lController.getControlValueForErr(liError, mSensorOffset);
+			LCD.drawString("Control value: " + lfControlValue, 0, 2);
+			float lfRightSpeed = INITIAL_SPEED - lfControlValue;
+			float lfLeftSpeed = INITIAL_SPEED + lfControlValue;
+			LCD.drawString("Right speed: " + lfRightSpeed, 0, 3);
+			LCD.drawString("Left speed: " + lfLeftSpeed, 0, 4);
+			
+			setSpeed(mRightMotor, lfRightSpeed);
+			setSpeed(mLeftMotor, lfLeftSpeed);
 
-			if (liError == 0) {
-
-				setSpeed(mRightMotor, INITIAL_SPEED);
-				setSpeed(mLeftMotor, INITIAL_SPEED);
-
-			} else if (liError > 0) {
-
-				setSpeed(mRightMotor, INITIAL_SPEED * (1 - lfControlValue));
-				setSpeed(mLeftMotor, INITIAL_SPEED * (1 + lfControlValue));
-
-			} else {
-
-				setSpeed(mRightMotor, INITIAL_SPEED * (1 + lfControlValue));
-				setSpeed(mLeftMotor, INITIAL_SPEED * (1 - lfControlValue));
-
-			}
-			Delay.msDelay(100);
+			Delay.msDelay(50);
 		}
 
 	}
