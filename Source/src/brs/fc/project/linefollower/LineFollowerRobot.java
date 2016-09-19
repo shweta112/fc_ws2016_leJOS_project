@@ -10,7 +10,7 @@ import lejos.nxt.SensorPort;
 import lejos.util.Delay;
 
 public class LineFollowerRobot {
-	private static float INITIAL_SPEED = 100;
+	private static float INITIAL_SPEED = 150;
 	private LightSensor mLeftLS;
 	private LightSensor mRightLS;
 	private NXTRegulatedMotor mRightMotor;
@@ -25,6 +25,7 @@ public class LineFollowerRobot {
 		mLeftMotor = Motor.C;
 		mRightMotor.setSpeed(INITIAL_SPEED);
 		mLeftMotor.setSpeed(INITIAL_SPEED);
+		Delay.msDelay(100);
 	}
 
 	public void calibrate() {
@@ -36,7 +37,7 @@ public class LineFollowerRobot {
 
 	public void start() {
 
-		PController lController = new PController((float)3);
+		PController lController = new PController((float)7);
 		mRightMotor.forward();
 		mLeftMotor.forward();
 
