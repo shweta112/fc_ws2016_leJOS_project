@@ -9,14 +9,43 @@ import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.util.Delay;
 
+/**
+ * Line follower robot implementation.
+ */
 public class LineFollowerRobot {
+	/**
+	 * Initial speed.
+	 */
 	private static float INITIAL_SPEED = 250;
+	
+	/**
+	 * Left light sensor.
+	 */
 	private LightSensor mLeftLS;
+	
+	/**
+	 * Right light sensor.
+	 */
 	private LightSensor mRightLS;
+	
+	/**
+	 * Right motor.
+	 */
 	private NXTRegulatedMotor mRightMotor;
+	
+	/**
+	 * Left motor.
+	 */
 	private NXTRegulatedMotor mLeftMotor;
+	
+	/**
+	 * Offset to adjust difference between left and right sensor.
+	 */
 	private float mSensorOffset;
 
+	/**
+	 * Constructor
+	 */
 	public LineFollowerRobot() {
 
 		mLeftLS = new LightSensor(SensorPort.S4);
@@ -28,6 +57,9 @@ public class LineFollowerRobot {
 		Delay.msDelay(100);
 	}
 
+	/**
+	 * Calibrates the robot to adjust for the difference between the two sensors.
+	 */
 	public void calibrate() {
 
 		mSensorOffset = mLeftLS.getLightValue() - mRightLS.getLightValue();
@@ -35,6 +67,9 @@ public class LineFollowerRobot {
 		LCD.drawString("Offset: " + mSensorOffset, 0, 1);
 	}
 
+	/**
+	 * Starts the line following process.
+	 */
 	public void start() {
 
 		PController lController = new PController((float) 12);
@@ -58,6 +93,10 @@ public class LineFollowerRobot {
 
 	}
 
+	/**
+	 * Gets the current error. It is the difference between the intensities detected by the left and right light sensors.
+	 * @return error
+	 */
 	private int getError() {
 
 		int liLeftLSValue = mLeftLS.getLightValue();
@@ -66,6 +105,11 @@ public class LineFollowerRobot {
 
 	}
 
+	/**
+	 * Sets the speed of the motor
+	 * @param pMotor the motor to set speed for
+	 * @param pSpeed speed to set
+	 */
 	private void setSpeed(NXTRegulatedMotor pMotor, float pSpeed) {
 		if (isValidSpeed(pMotor, pSpeed) == true) {
 			pMotor.setSpeed(pSpeed);
@@ -78,6 +122,12 @@ public class LineFollowerRobot {
 		pMotor.setSpeed(0);
 	}
 
+	/**
+	 * Checks if the speed is valid. 
+	 * @param pMotor motor to set speed
+	 * @param pSpeed speed to be set
+	 * @return false if the speed is greater than maximum of motor or non-positive
+	 */
 	private boolean isValidSpeed(NXTRegulatedMotor pMotor, float pSpeed) {
 		if (pSpeed > pMotor.getMaxSpeed() || pSpeed < 0) {
 			return false;
