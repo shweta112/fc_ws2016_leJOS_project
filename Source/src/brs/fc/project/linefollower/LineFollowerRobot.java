@@ -10,7 +10,7 @@ import lejos.nxt.SensorPort;
 import lejos.util.Delay;
 
 public class LineFollowerRobot {
-	private static float INITIAL_SPEED = 250;
+	private static float INITIAL_SPEED = 100;
 	private LightSensor mLeftLS;
 	private LightSensor mRightLS;
 	private NXTRegulatedMotor mRightMotor;
@@ -37,7 +37,7 @@ public class LineFollowerRobot {
 
 	public void start() {
 
-		PController lController = new PController((float) 12);
+		PController lController = new PController((float) 10);
 		mRightMotor.forward();
 		mLeftMotor.forward();
 
@@ -53,7 +53,7 @@ public class LineFollowerRobot {
 			setSpeed(mRightMotor, lfRightSpeed);
 			setSpeed(mLeftMotor, lfLeftSpeed);
 
-			Delay.msDelay(30);
+			Delay.msDelay(50);
 		}
 
 	}
@@ -68,18 +68,26 @@ public class LineFollowerRobot {
 
 	private void setSpeed(NXTRegulatedMotor pMotor, float pSpeed) {
 		if (isValidSpeed(pMotor, pSpeed) == true) {
+			pMotor.forward();
 			pMotor.setSpeed(pSpeed);
 			return;
 		}
 		if (pSpeed > pMotor.getMaxSpeed()) {
+			pMotor.forward();
 			pMotor.setSpeed(pMotor.getMaxSpeed());
 			return;
 		}
-		pMotor.setSpeed(0);
+		if (pSpeed < 0) {
+			pMotor.backward();
+			pSpeed = pSpeed * -1;
+			pMotor.setSpeed(pSpeed);
+			return;
+		}
+		pMotor.setSpeed(1);
 	}
 
 	private boolean isValidSpeed(NXTRegulatedMotor pMotor, float pSpeed) {
-		if (pSpeed > pMotor.getMaxSpeed() || pSpeed < 0) {
+		if (pSpeed > pMotor.getMaxSpeed() || pSpeed <= 0) {
 			return false;
 		}
 		return true;
